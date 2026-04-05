@@ -1,4 +1,6 @@
+import moveKing from "./pieceMoves/king.js";
 import movePawn from "./pieceMoves/pawn.js";
+import moveQueen from "./pieceMoves/queen.js";
 import moveRook from "./pieceMoves/rook.js";
 
 let chessMatrix = [
@@ -80,81 +82,67 @@ function movePiece(r1, c1, r2, c2){
     })
 }
 
-function dragAndDropPieces(){
+function dragAndDropPieces() {
     let draggedPiece = null;
-    let validMoves = []
+    let validMoves = [];
 
     document.addEventListener("dragstart", (e) => {
         if (e.target.classList.contains("piece")) {
             draggedPiece = e.target;
-            let row = parseInt(draggedPiece.dataset.row)
-            let col = parseInt(draggedPiece.dataset.col)
+            let row = parseInt(draggedPiece.dataset.row);
+            let col = parseInt(draggedPiece.dataset.col);
             let code = draggedPiece.dataset.code;
 
-            if (code === 'wP' || code === 'bP'){
-                validMoves.push(...movePawn(row, col, chessMatrix))
-            }
-            if (code === 'wR' || code === 'bR'){
-                validMoves.push(...moveRook(row, col, chessMatrix))
-            }
-            if (code === 'wN' || code === 'bN'){
-                // validMoves.push(...moveKnight(row, col, chessMatrix))
-            }
-            if (code === 'wB' || code === 'bB'){
-                // validMoves.push(...moveBishop(row, col, chessMatrix))
-            }
-            if (code === 'wQ' || code === 'bQ'){
-                // validMoves.push(...moveQueen(row, col, chessMatrix))
-            }
-            if (code === 'wK' || code === 'bK'){
-                // validMoves.push(...moveKing(row, col, chessMatrix))
-            }
+            // ✅ Mutate the array instead of reassigning
+            validMoves.splice(0, validMoves.length);
+
+            if (code === 'wP' || code === 'bP') validMoves.push(...movePawn(row, col, chessMatrix));
+            if (code === 'wR' || code === 'bR') validMoves.push(...moveRook(row, col, chessMatrix));
+            if (code === 'wQ' || code === 'bQ') validMoves.push(...moveQueen(row, col, chessMatrix));
+            if (code === 'wK' || code === 'bK') validMoves.push(...moveKing(row, col, chessMatrix));
 
             e.target.classList.add("dragging");
         }
     });
 
     document.addEventListener("dragend", (e) => {
-        if (e.target.classList.contains("piece")){
-
+        if (e.target.classList.contains("piece")) {
             e.target.classList.remove("dragging");
             draggedPiece = null;
-            validMoves = []
+            // ✅ Mutate instead of reassign
+            validMoves.splice(0, validMoves.length);
         }
     });
 
-    document.querySelectorAll(".square").forEach((square, index) => {
-        let row = Math.floor(index / 8);
-        let col = index % 8;
+    document.querySelectorAll(".square").forEach((square) => {
         square.addEventListener("dragover", (e) => {
             e.preventDefault();
             square.classList.add("drag-over");
         });
 
-        square.addEventListener("dragleave", (e) => {
+        square.addEventListener("dragleave", () => {
             square.classList.remove("drag-over");
         });
 
         square.addEventListener("drop", (e) => {
-    e.preventDefault();
-    square.classList.remove("drag-over");
-    
-    if (draggedPiece) {
-        let r1 = parseInt(draggedPiece.dataset.row);
-        let c1 = parseInt(draggedPiece.dataset.col);
-        
-        let targetRow = parseInt(square.dataset.row);         
-        let targetCol = parseInt(square.dataset.col);
+            e.preventDefault();
+            square.classList.remove("drag-over");
 
-        const isAllowed = validMoves.some(move => move.row === targetRow && move.col === targetCol);
+            if (draggedPiece) {
+                let r1 = parseInt(draggedPiece.dataset.row);
+                let c1 = parseInt(draggedPiece.dataset.col);
+                let targetRow = parseInt(square.dataset.row);
+                let targetCol = parseInt(square.dataset.col);
 
-        if (isAllowed) {
-            movePiece(r1, c1, targetRow, targetCol);
-        } else {
-            console.log("Invalid move!");
-        }
-    }
-});
+                const isAllowed = validMoves.some(move => move.row === targetRow && move.col === targetCol);
+
+                if (isAllowed) {
+                    movePiece(r1, c1, targetRow, targetCol);
+                } else {
+                    console.log("Invalid move!");
+                }
+            }
+        });
     });
 }
 
