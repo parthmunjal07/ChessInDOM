@@ -12,18 +12,15 @@ export default function moveQueen(r, c, chessMatrix) {
             const targetSquare = chessMatrix[currentRow][currentCol];
 
             if (targetSquare === 0) {
-                // Empty square, add it and keep sliding
                 moves.push({ row: currentRow, col: currentCol });
             } else {
-                // We hit a piece
-                const targetColor = String(targetSquare)[0]; 
+
+               const targetColor = String(targetSquare)[0]; 
 
                 if (targetColor !== myColor) {
-                    // It's an enemy, capture it!
                     moves.push({ row: currentRow, col: currentCol });
                 }
                 
-                // Stop sliding regardless of whether it was friend or foe
                 break; 
             }
 
