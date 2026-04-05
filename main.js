@@ -1,5 +1,6 @@
 import moveBishop from "./pieceMoves/bishop.js";
 import moveKing from "./pieceMoves/king.js";
+import moveKnight from "./pieceMoves/knight.js";
 import movePawn from "./pieceMoves/pawn.js";
 import moveQueen from "./pieceMoves/queen.js";
 import moveRook from "./pieceMoves/rook.js";
@@ -101,6 +102,7 @@ function dragAndDropPieces() {
             if (code === 'wQ' || code === 'bQ') validMoves.push(...moveQueen(row, col, chessMatrix));
             if (code === 'wK' || code === 'bK') validMoves.push(...moveKing(row, col, chessMatrix));
             if (code === 'wB' || code === 'bB') validMoves.push(...moveBishop(row, col, chessMatrix));
+            if (code === 'wN' || code === 'bN') validMoves.push(...moveKnight(row, col, chessMatrix));
 
             e.target.classList.add("dragging");
         }
