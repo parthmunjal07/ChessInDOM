@@ -59,3 +59,13 @@
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 50%;
 }
+/* Add this to the bottom of your style.css file */
+
+#turn-indicator {
+  text-align: center;
+  font-family: sans-serif;
+  margin-top: 20px;
+  margin-bottom: 0px;
+  color: #333;
+  font-size: 2rem;
+}

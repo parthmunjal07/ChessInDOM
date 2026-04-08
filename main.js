@@ -21,6 +21,17 @@ const pieceSymbols = {
     'bK':'♚','bQ':'♛','bR':'♜','bB':'♝','bN':'♞','bP':'♟'
 }
 
+let currentTurn = 'w';
+const turnIndicatorElement = document.getElementById("turn-indicator");
+
+function updateTurnDisplay() {
+    if (currentTurn === 'w') {
+        turnIndicatorElement.textContent = "White's Turn";
+    } else {
+        turnIndicatorElement.textContent = "Black's Turn";
+    }
+}
+
 function renderChess() {
     let chessBoard = document.getElementById("board");
     for (let i = 0; i < chessMatrix.length; i++) {
@@ -61,6 +72,10 @@ function renderPieces() {
 function movePiece(r1, c1, r2, c2){
     // matrix update
     let piece = chessMatrix[r1][c1];
+
+    if (piece === 'wP' && r2 === 0) piece = 'wQ';
+    if (piece === 'bP' && r2 === 7) piece = 'bQ';
+    
     chessMatrix[r2][c2] = piece
     chessMatrix[r1][c1] = 0;
     // html update
@@ -71,14 +86,14 @@ function movePiece(r1, c1, r2, c2){
             square.innerHTML = '';
             let cell = chessMatrix[row][col];
             if (cell !== 0) {
-                let piece = document.createElement('div');
-                piece.classList.add('piece');
-                piece.dataset.row = row; 
-                piece.dataset.col = col;
-                piece.dataset.code = cell;
-                piece.textContent = pieceSymbols[cell];
-                piece.draggable = true;
-                square.appendChild(piece);
+                let newPiece = document.createElement('div');
+                newPiece.classList.add('piece');
+                newPiece.dataset.row = row; 
+                newPiece.dataset.col = col;
+                newPiece.dataset.code = cell;
+                newPiece.textContent = pieceSymbols[cell];
+                newPiece.draggable = true;
+                square.appendChild(newPiece);
             }
         }
     })
@@ -90,6 +105,14 @@ function dragAndDropPieces() {
 
     document.addEventListener("dragstart", (e) => {
         if (e.target.classList.contains("piece")) {
+
+            let colorCode = e.target.dataset.code;
+
+            if (colorCode[0] !== currentTurn) {
+                e.preventDefault(); 
+                return;
+            }
+
             draggedPiece = e.target;
             let row = parseInt(draggedPiece.dataset.row);
             let col = parseInt(draggedPiece.dataset.col);
@@ -140,6 +163,8 @@ function dragAndDropPieces() {
 
                 if (isAllowed) {
                     movePiece(r1, c1, targetRow, targetCol);
+                    currentTurn = currentTurn === 'w' ? 'b' : 'w';
+                    updateTurnDisplay();
                 } else {
                     console.log("Invalid move!");
                 }
